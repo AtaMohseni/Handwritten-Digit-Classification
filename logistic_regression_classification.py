@@ -9,6 +9,7 @@ Created on Sat Apr  8 13:57:24 2023
 from data_loader import data_loader
 import random
 import numpy as np
+import matplotlib.pyplot as plt
 
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
@@ -36,10 +37,10 @@ def train(data):
     log-likelihood using gradient ascent"""
     
     w = np.zeros(len(data[0][0])) #initialize w
-    learning_rate = 0.001
+    learning_rate = 0.0001
     log_likelihood_vec = [log_likelihood(data, w)]
     
-    for epoch in range(100):
+    for epoch in range(200):
         
         w = w + learning_rate*(gradient(data, w))
         log_likelihood_vec.append(log_likelihood(data, w))
@@ -67,3 +68,8 @@ if __name__ == "__main__" :
     w , log_likelihood_vec  = train(datatrain)
     train_error = error(datatrain,w)
     test_error = error(datatest,w)
+    plt.plot(list(range(len(log_likelihood_vec))),log_likelihood_vec)
+    plt.xlabel('iteration')
+    plt.ylabel('log likelihood')
+    #plt.axis([0, 100, -1000, 0])
+    #plt.show()
