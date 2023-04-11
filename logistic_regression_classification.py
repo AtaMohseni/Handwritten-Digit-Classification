@@ -9,16 +9,13 @@ Created on Sat Apr  8 13:57:24 2023
 from data_loader import data_loader
 import random
 import numpy as np
-datatrain , datatest = data_loader()
-random.shuffle(datatrain)
-random.shuffle(datatest)
 
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
 def log_likelihood(data,w):
     """ function to calculate log-likelihood of entire data using current
-    weight vectore w """
+    weight vectore w, and return the log-likelihood value """
     
     Lw= 0
     for index, datapoint in enumerate(data) :
@@ -27,7 +24,7 @@ def log_likelihood(data,w):
 
 def gradient(data, w):
     """ function to calculate the gradient vector of log likelihood of data
-    using the current weight vector w"""
+    using the current weight vector w, and return the gradient vector"""
     
     grad = np.zeros(len(w))
     for index, datapoint in enumerate(data) :
@@ -35,6 +32,8 @@ def gradient(data, w):
     return grad  
   
 def train(data):
+    """ training data to find optimum weight vector w to maximize
+    log-likelihood using gradient ascent"""
     
     w = np.zeros(len(data[0][0])) #initialize w
     learning_rate = 0.001
@@ -46,6 +45,25 @@ def train(data):
         log_likelihood_vec.append(log_likelihood(data, w))
         
     return w , log_likelihood_vec
-        
-w , log_likelihood_vec  = train(datatrain)
+
+def error(data,w):
+    """ function that predict classes and calculate  and return 
+    misclassification percentage """ 
+    preds = []
+    correct = 0
+    for index, datapoint in enumerate (data):
+        predict = np.rint(sigmoid(np.dot(np.array(datapoint[0]),w)))
+        preds.append(predict)
+        if predict == datapoint[1]:
+            correct += 1
+    percent_error = (1 - correct/len(data))*100
+    return percent_error    
+   
+if __name__ == "__main__" :   
     
+    datatrain , datatest = data_loader()
+    random.shuffle(datatrain)
+    random.shuffle(datatest)     
+    w , log_likelihood_vec  = train(datatrain)
+    train_error = error(datatrain,w)
+    test_error = error(datatest,w)
